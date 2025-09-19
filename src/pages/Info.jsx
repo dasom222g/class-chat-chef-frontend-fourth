@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PrevButton from "../components/PrevButton";
 import InfoInput from "../components/InfoInput";
 import AddButton from "../components/AddButton";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 
-const Info = () => {
+const Info = ({ sendIngredientList }) => {
   // logic
   const history = useNavigate()
 
@@ -27,14 +27,34 @@ const Info = () => {
   };
 
   const handleRemove = (selectedId) => {
-    console.log("🚀 ~ selectedId:", selectedId)
     const filterIngredientList = ingredientList.filter((item) => item.id !== selectedId)
     setIngredientList(filterIngredientList)
   }
 
+  const handleInputChange = (updateItem) => {
+    setIngredientList((prev) => prev.map((item) => item.id === updateItem.id ? updateItem : item))
+  }
+
   const handleNext = () => {
+    sendIngredientList(ingredientList)
     history("/chat")
   };
+
+  // useEffect 용법 3가지
+  // 첫번째: 컴포넌트에 존재하는 모든 state의 값이 변경될때 실행
+  useEffect(() => { })
+
+  // 두번째: 컴포넌트가 생성되는 딱 한번 실행
+  useEffect(() => { }, [])
+
+  // 세번째: 특정state가 변경될때 실행
+  useEffect(() => { }, [ingredientList])
+
+  // useEffect(() => {
+  //   console.log("ingredientList", ingredientList)
+  // }, [ingredientList])
+
+
 
   // view
   return (
@@ -58,7 +78,7 @@ const Info = () => {
             {/* START:input 영역 */}
             <div>
               {ingredientList.map((item) => (
-                <InfoInput key={item.id} content={item} onRemove={handleRemove} />
+                <InfoInput key={item.id} content={item} onRemove={handleRemove} onChange={handleInputChange} />
               ))}
             </div>
             {/* END:input 영역 */}
